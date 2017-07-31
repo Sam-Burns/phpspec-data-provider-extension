@@ -4,12 +4,12 @@ namespace Coduo\PhpSpec\DataProvider\Runner\Maintainer;
 
 use Coduo\PhpSpec\DataProvider\Annotation\Parser;
 use PhpSpec\Loader\Node\ExampleNode;
-use PhpSpec\Runner\Maintainer\MaintainerInterface;
-use PhpSpec\SpecificationInterface;
+use PhpSpec\Runner\Maintainer\Maintainer;
+use PhpSpec\Specification;
 use PhpSpec\Runner\MatcherManager;
 use PhpSpec\Runner\CollaboratorManager;
 
-class DataProviderMaintainer implements MaintainerInterface
+class DataProviderMaintainer implements Maintainer
 {
     const EXAMPLE_NUMBER_PATTERN = '/^(\d+)\)/';
 
@@ -18,20 +18,23 @@ class DataProviderMaintainer implements MaintainerInterface
      *
      * @return bool
      */
-    public function supports(ExampleNode $example)
+    public function supports(ExampleNode $example) : bool
     {
         return $this->haveValidDataProvider($example);
     }
 
     /**
-     * @param ExampleNode            $example
-     * @param SpecificationInterface $context
-     * @param MatcherManager         $matchers
-     * @param CollaboratorManager    $collaborators
+     * @param ExampleNode         $example
+     * @param Specification       $context
+     * @param MatcherManager      $matchers
+     * @param CollaboratorManager $collaborators
      */
-    public function prepare(ExampleNode $example, SpecificationInterface $context,
-                            MatcherManager $matchers, CollaboratorManager $collaborators)
-    {
+    public function prepare(
+        ExampleNode $example,
+        Specification $context,
+        MatcherManager $matchers,
+        CollaboratorManager $collaborators
+    ) {
         $exampleNum = $this->getExampleNumber($example->getTitle());
         $providedData = $this->getDataFromProvider($example);
 
@@ -51,19 +54,22 @@ class DataProviderMaintainer implements MaintainerInterface
 
     /**
      * @param ExampleNode            $example
-     * @param SpecificationInterface $context
+     * @param Specification          $context
      * @param MatcherManager         $matchers
      * @param CollaboratorManager    $collaborators
      */
-    public function teardown(ExampleNode $example, SpecificationInterface $context,
-                             MatcherManager $matchers, CollaboratorManager $collaborators)
-    {
+    public function teardown(
+        ExampleNode $example,
+        Specification $context,
+        MatcherManager $matchers,
+        CollaboratorManager $collaborators
+    ) {
     }
 
     /**
      * @return int
      */
-    public function getPriority()
+    public function getPriority() : int
     {
         return 50;
     }

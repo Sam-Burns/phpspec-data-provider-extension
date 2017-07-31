@@ -13,7 +13,7 @@ class PHPSpecContext implements SnippetAcceptingContext
     private $workDir;
 
     /**
-     * @var ApplicationTester
+     * @var \Console\ApplicationTester
      */
     private $applicationTester;
 
@@ -49,7 +49,8 @@ class PHPSpecContext implements SnippetAcceptingContext
     {
         $phpspecyml = <<<YML
 extensions:
-  - Coduo\PhpSpec\DataProvider\DataProviderExtension
+  Coduo\PhpSpec\DataProvider\DataProviderExtension:
+      []
 YML;
 
         file_put_contents($this->workDir.'phpspec.yml', $phpspecyml);
@@ -75,11 +76,11 @@ YML;
      */
     public function iRunPhpspec()
     {
-        $application = new Application('2.0-dev');
+        $application = new Application('4.0.0');
         $application->setAutoExit(false);
 
         $this->applicationTester = new Console\ApplicationTester($application);
-        $this->applicationTester->run('run --no-interaction -f pretty');
+        $this->applicationTester->run('run --no-interaction -f pretty -v');
     }
 
     /**
@@ -87,6 +88,9 @@ YML;
      */
     public function itShouldPass()
     {
+        if ($this->applicationTester->getResult() != 0) {
+            var_dump($this->applicationTester->getDisplay());
+        }
         expect($this->applicationTester->getResult())->toBe(0);
     }
 
